@@ -3,6 +3,8 @@
 #include <avr/sleep.h>
 
 int main(void) {
+	ADCSRA &= ~(1 << ADEN);
+	
 	DDRB = 0xFF ^ (1 << DDB4);
 	PORTB = 0x00;
 	OCR1A = 60;
