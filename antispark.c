@@ -3,7 +3,7 @@
 #include <avr/sleep.h>
 
 int main(void) {
-	DDRB = 0xFF ^ (1 << DDB2);
+	DDRB = 0xFF ^ (1 << DDB4);
 	PORTB = 0x00;
 	OCR1A = 60;
 	TCCR1 = (1 << CTC1) | (1 << CS11) | (1 << CS12) | (1 << CS13);
@@ -12,14 +12,13 @@ int main(void) {
 	uint8_t halfSeconds = 0;
 	
 	cli();			
-	GIMSK |= (1 << INT0);
+	GIMSK |= (1 << PCIE);
 	set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-	MCUCR &= ~(1 << ISC00);
-	MCUCR |= (1 << ISC01);
+	PCMSK |= (1 << PCINT4);
 	sei();
 
 	for(;;) {
-		if (bit_is_clear(PINB, PB2)) {
+		if (bit_is_clear(PINB, PB4)) {
 			if (buttonDown == 0) {
 				TCCR1 = (1 << CTC1) | (1 << CS11) | (1 << CS12) | (1 << CS13);
 				buttonDown = 1;
@@ -30,7 +29,7 @@ int main(void) {
 					TCNT1 = 0;
 				}
 				if (halfSeconds == 2 && on == 0) {
-					PORTB = (1 << PORTB1) | (1 << PORTB3);
+					PORTB = (1 << PORTB2) | (1 << PORTB3);
 					on = 1;
 					halfSeconds = 0;
 					TCCR1 = 0x00;
@@ -41,7 +40,7 @@ int main(void) {
 					TCCR1 = 0x00;
 				}
 			}
-		} else if (bit_is_set(PINB, PB2)) {
+		} else if (bit_is_set(PINB, PB4)) {
 			buttonDown = 0;
 			halfSeconds = 0;
 			TCCR1 = 0x00;
@@ -53,6 +52,6 @@ int main(void) {
 	return 0;
 }
 
-ISR(INT0_vect) {
+ISR(PCINT0_vect) {
 	//Check if needed
 }
