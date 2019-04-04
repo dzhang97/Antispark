@@ -2,7 +2,7 @@
 
 int main(void) {
 	DDRB = 0xFF ^ (1<<PIN4);
-	PORTB = 0x00 | (1 << PORTB4);
+	PORTB = 0x00;
 	OCR1A = 60;
 	TCCR1 = (1 << CTC1) | (1 << CS11) | (1 << CS12) | (1 << CS13);
 	uint8_t buttonDown = 0;
@@ -10,8 +10,11 @@ int main(void) {
 	uint8_t halfSeconds = 0;
 
 	for(;;) {
-		if (bit_is_clear(PINB, PB4)) {
+		if (bit_is_set(PINB, PB4)) {
 			if (buttonDown == 0) {
+				if (on == 0) {
+					PORTB = (1 << PORTB1);
+				}
 				TCCR1 = (1 << CTC1) | (1 << CS11) | (1 << CS12) | (1 << CS13);
 				buttonDown = 1;
 			} else {
@@ -21,7 +24,7 @@ int main(void) {
 					TCNT1 = 0;
 				}
 				if (halfSeconds == 2 && on == 0) {
-					PORTB = (1 << PORTB2) | (1 << PORTB3);
+					PORTB = (1 << PORTB2);
 					on = 1;
 					halfSeconds = 0;
 					TCCR1 = 0x00;
@@ -32,7 +35,10 @@ int main(void) {
 					TCCR1 = 0x00;
 				}
 			}
-		} else if (bit_is_set(PINB, PB4)) {
+		} else if (bit_is_clear(PINB, PB4)) {
+			if (on == 0) {
+				PORTB = 0x00;
+			}
 			buttonDown = 0;
 			halfSeconds = 0;
 			TCCR1 = 0x00;
