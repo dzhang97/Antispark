@@ -16,7 +16,7 @@ int main(void) {
 			if (buttonDown == 0) {
 				TCCR1 = (1 << CTC1) | (1 << CS11) | (1 << CS12) | (1 << CS13);
 				buttonDown = 1;
-				if (on == 1) {
+				if (on == 0) {
 					PORTB = (1 << PORTB1);
 				}
 			} else {
@@ -41,6 +41,9 @@ int main(void) {
 			buttonDown = 0;
 			halfSeconds = 0;
 			TCCR1 = 0x00;
+			if (on == 0) {
+				PORTB = 0x00;
+			}
 		}
 	}
 	
